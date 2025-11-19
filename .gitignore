@@ -1,0 +1,33 @@
+# Default ignored files
+/shelf/
+/firstCrud/.idea/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+# Arquivos de ambiente
+../.env
+
+# Binários do Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Arquivos de teste
+*.test
+*.out
+
+# Dependências
+vendor/
+
+# IDEs
+.vscode/
+firstCrud/.idea/
+*.swp
+*.swo
+*~
+.env
+.env
