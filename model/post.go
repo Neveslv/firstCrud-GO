@@ -9,6 +9,12 @@ type Post struct {
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
 
-	// Campos extras para JOIN
-	UserName string `json:"user_name,omitempty"`
+	// Campos extras para quando retornar com dados do usuário
+	UserName  string `json:"user_name,omitempty"`
+	UserEmail string `json:"user_email,omitempty"`
+}
+
+type PostInput struct {
+	Titulo  string `json:"titulo"binding:"required,min=3,max=200"`
+	Content string `json:"content"binding:"required,min=10"`
 }
