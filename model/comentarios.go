@@ -13,6 +13,6 @@ type Comentarios struct {
 	UserEmail string `json:"user_email,omitempty"`
 }
 
-type ComentarioImput struct {
+type ComentarioInput struct {
 	Content string `json:"content" binding:"required,min=1 max=1000"`
 }

@@ -1,9 +1,7 @@
 package CrudGO
 
-import (
-	frame "github.com/gin-gonic/gin"
-)
+import ()
 
 func main() {
-	r := frame.Default()
+
 }
