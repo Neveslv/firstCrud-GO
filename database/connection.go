@@ -26,7 +26,6 @@ func Connect() {
 	dbname := getEnv("DB_NAME", "crud_go")
 	sslmode := getEnv("DB_SSLMODE", "disable")
 
-	// Montar string de conexão
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, user, password, dbname, sslmode,

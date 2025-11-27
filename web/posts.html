@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Posts</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>📝 Gerenciar Posts</h1>
+
+    <div class="header-actions">
+        <a href="/" class="btn-back">← Voltar ao Dashboard</a>
+        <a href="/posts/novo" class="btn">➕ Novo Post</a>
+    </div>
+
+    {{if .posts}}
+    <div class="posts-grid">
+        {{range .posts}}
+        <div class="post-card">
+            <h3>{{.Titulo}}</h3>
+            <p>{{if gt (len .Content) 150}}{{slice .Content 0 150}}...{{else}}{{.Content}}{{end}}</p>
+            <small class="post-meta">
+                Por: Usuário #{{.UserID}} | {{.CreatedAt.Format "02/01/2006 15:04"}}
+            </small>
+            <div class="post-actions">
+                <a href="/posts/{{.ID}}/detalhes" class="btn-small">💬 Ver Comentários</a>
+                <form action="/api/posts/{{.ID}}" method="POST" class="inline-form" onsubmit="return confirm('Tem certeza que deseja deletar este post?');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-danger">🗑️ Deletar</button>
+                </form>
+            </div>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <p class="no-data">Nenhum post cadastrado ainda. Clique em "Novo Post" para começar!</p>
+    {{end}}
+</div>
+</body>
+</html>

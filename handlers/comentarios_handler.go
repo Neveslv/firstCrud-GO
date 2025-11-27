@@ -10,7 +10,13 @@ import (
 )
 
 func CriarComentario(c *gin.Context) {
-	postID := c.Param("post_id")
+	postID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID do post inválido",
+		})
+		return
+	}
 	var input model.ComentarioInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -32,8 +38,8 @@ func CriarComentario(c *gin.Context) {
 	userID, _ := strconv.Atoi(userIDstr)
 
 	var comentarioID int
-	query := "INSERT INTO comentario (post_id, user_id, content) VALUES ($1, $2, $3) RETURNING id"
-	err := database.DB.QueryRow(query, postID, userID, input.Content).Scan(&comentarioID)
+	query := "INSERT INTO comentarios (post_id, user_id, content) VALUES ($1, $2, $3) RETURNING id"
+	err = database.DB.QueryRow(query, postID, userID, input.Content).Scan(&comentarioID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -50,7 +56,7 @@ func CriarComentario(c *gin.Context) {
 }
 
 func ListarComentarioPorPost(c *gin.Context) {
-	postId := c.Param("post_id")
+	postId := c.Param("id")
 	rows, err := database.DB.Query(`
         SELECT 
             co.id, co.post_id, co.user_id, co.content, co.created_at,
@@ -126,6 +132,7 @@ func AtualizarComentario(c *gin.Context) {
 			"error":    "Dados inválidos",
 			"detalhes": err.Error(),
 		})
+		return
 	}
 
 	result, err := database.DB.Exec(`
@@ -145,6 +152,7 @@ func AtualizarComentario(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Comentario não encontrado",
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -154,7 +162,7 @@ func AtualizarComentario(c *gin.Context) {
 
 func DeletarComentario(c *gin.Context) {
 	id := c.Param("id")
-	result, err := database.DB.Exec("DELETE FROM comentario WHERE id = $1", id)
+	result, err := database.DB.Exec("DELETE FROM comentarios WHERE id = $1", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Comentario não encontrado",

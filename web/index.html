@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Go - Sistema Completo</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="dashboard-header">
+        <h1>🚀 CRUD Go - Sistema Completo</h1>
+        <p class="subtitle">Sistema de gerenciamento com Go, Gin Framework e PostgreSQL</p>
+    </div>
+
+    <div class="menu-section">
+        <h2>📋 Gerenciamento</h2>
+        <div class="menu">
+            <a href="/usuarios" class="menu-card">
+                <div class="menu-icon">👤</div>
+                <h3>Gerenciar Usuários</h3>
+                <p>Criar, visualizar e deletar usuários do sistema</p>
+            </a>
+
+            <a href="/posts" class="menu-card">
+                <div class="menu-icon">📝</div>
+                <h3>Gerenciar Posts</h3>
+                <p>Criar posts e visualizar comentários</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2>⚡ Ações Rápidas</h2>
+        <div class="actions-grid">
+            <a href="/usuarios/novo" class="action-btn">
+                <span>➕</span>
+                Novo Usuário
+            </a>
+            <a href="/posts/novo" class="action-btn">
+                <span>➕</span>
+                Novo Post
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

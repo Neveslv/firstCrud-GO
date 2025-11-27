@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Post</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>➕ Criar Novo Post</h1>
+    <a href="/posts" class="btn-back">← Voltar para Posts</a>
+
+    <form action="/api/posts" method="POST" class="form">
+        <div class="form-group">
+            <label for="user_id">Autor (ID do Usuário):</label>
+            <input type="number" id="user_id" name="user_id" placeholder="Digite o ID do usuário" required min="1">
+            <small>Informe o ID de um usuário existente</small>
+        </div>
+
+        <div class="form-group">
+            <label for="titulo">Título do Post:</label>
+            <input type="text" id="titulo" name="titulo" placeholder="Digite o título do post" required maxlength="200">
+        </div>
+
+        <div class="form-group">
+            <label for="content">Conteúdo:</label>
+            <textarea id="content" name="content" rows="10" placeholder="Escreva o conteúdo do post..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-success">💾 Publicar Post</button>
+    </form>
+</div>
+</body>
+</html>

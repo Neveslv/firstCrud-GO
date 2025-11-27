@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.post.Titulo}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <a href="/posts" class="btn-back">← Voltar para Posts</a>
+
+    <h1>{{.post.Titulo}}</h1>
+
+    <div class="post-content">
+        <p>{{.post.Content}}</p>
+        <small>Por: Usuário #{{.post.UserID}} | {{.post.CreatedAt.Format "02/01/2006 15:04"}}</small>
+    </div>
+
+    <hr>
+
+    <div class="comentarios-section">
+        <h2>💬 Comentários</h2>
+
+        <div class="comentario-form">
+            <h3>Adicionar Comentário</h3>
+            <form action="/api/posts/{{.post.ID}}/comentarios" method="POST" class="form">
+                <div class="form-group">
+                    <label for="user_id">Seu ID de Usuário:</label>
+                    <input type="number" id="user_id" name="user_id" placeholder="Digite seu ID" required min="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Comentário:</label>
+                    <textarea id="content" name="content" rows="4" placeholder="Escreva seu comentário..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-success">💾 Comentar</button>
+            </form>
+        </div>
+
+        {{if .comentarios}}
+        {{range .comentarios}}
+        <div class="comentario">
+            <strong>Usuário #{{.UserID}}</strong>
+            <p>{{.Content}}</p>
+            <small>{{.CreatedAt.Format "02/01/2006 15:04"}}</small>
+
+            <div class="comentario-actions">
+                <form action="/api/comentarios/{{.ID}}" method="POST" class="inline-form" onsubmit="return confirm('Tem certeza que deseja deletar este comentário?');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-danger">🗑️ Deletar</button>
+                </form>
+            </div>
+        </div>
+        {{end}}
+        {{else}}
+        <p class="no-data">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+        {{end}}
+    </div>
+</div>
+</body>
+</html>
