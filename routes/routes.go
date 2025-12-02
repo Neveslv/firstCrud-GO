@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"CrudGO/handlers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,9 +12,7 @@ func SetupRoutes(r *gin.Engine) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
-	r.GET("/usuarios", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "usuarios.html", nil)
-	})
+	r.GET("/usuarios", handlers.ListarUsuariosHTML)
 	r.GET("/usuarios/novo", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "usuario_form.html", nil)
 	})

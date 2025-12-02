@@ -192,3 +192,36 @@ func DeletarUsuario(c *gin.Context) {
 		"mensagem": "Usuário deletado com sucesso",
 	})
 }
+
+func ListarUsuariosHTML(c *gin.Context) {
+	rows, err := database.DB.Query("SELECT id, nome, email, created_at FROM usuario ORDER BY created_at DESC ")
+	if err != nil {
+		c.HTML(http.StatusOK, "usuario.html", gin.H{
+			"usuarios": []model.Usuario{},
+			"error":    "Erro ao buscar o usuario",
+		})
+		return
+	}
+	defer rows.Close()
+
+	var usuarios []model.Usuario
+
+	for rows.Next() {
+		var usuario model.Usuario
+		err := rows.Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.CreatedAt)
+		if err != nil {
+			c.HTML(http.StatusOK, "usuarios.html", gin.H{
+				"usuarios": []model.Usuario{},
+				"error":    "Erro ao processar dados",
+			})
+			return
+		}
+
+		usuarios = append(usuarios, usuario)
+
+	}
+
+	c.HTML(http.StatusOK, "usuarios.html", gin.H{
+		"usuarios": usuarios,
+	})
+}

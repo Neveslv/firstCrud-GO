@@ -14,5 +14,6 @@ func SetupUsuarioRoutes(r *gin.Engine) {
 		usuarios.GET("/usuarios/:id", handlers.BuscarUsuarioPorID)
 		usuarios.PUT("/usuarios/:id", handlers.AtualizarUsuario)
 		usuarios.DELETE("/usuarios/:id", handlers.DeletarUsuario)
+		usuarios.POST("usuarios/:id", handlers.DeletarUsuario)
 	}
 }
