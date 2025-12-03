@@ -3,6 +3,7 @@ package handlers
 import (
 	"CrudGO/database"
 	"CrudGO/model"
+	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -247,5 +248,67 @@ func DeletarPost(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"mensagem": "Post deletado com sucesso",
+	})
+}
+
+func ListarPostHTML(c *gin.Context) {
+	query := `
+		SELECT p.id, p.user_id, p.titulo, p.content, p.created_at, u.nome, u.email 
+		FROM posts p 
+		LEFT JOIN usuario u ON p.user_id = u.id 
+		ORDER BY p.created_at DESC
+	`
+	rows, err := database.DB.Query(query)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "posts.html", gin.H{
+			"posts": []model.Post{},
+			"error": "Erro ao buscar posts: " + err.Error(),
+		})
+		return
+	}
+	defer rows.Close()
+
+	var posts []model.Post
+
+	for rows.Next() {
+		var post model.Post
+		var nomeTemp sql.NullString
+		var emailTemp sql.NullString
+
+		err := rows.Scan(
+			&post.ID,
+			&post.UserID,
+			&post.Titulo,
+			&post.Content,
+			&post.CreatedAt,
+			&nomeTemp,
+			&emailTemp,
+		)
+
+		if err != nil {
+			c.HTML(http.StatusInternalServerError, "posts.html", gin.H{
+				"posts": []model.Post{},
+				"error": "Erro ao processar dados",
+			})
+			return
+		}
+
+		if nomeTemp.Valid {
+			post.UserName = nomeTemp.String
+		} else {
+			post.UserName = "Usuário Desconhecido"
+		}
+
+		if emailTemp.Valid {
+			post.UserEmail = emailTemp.String
+		} else {
+			post.UserEmail = ""
+		}
+
+		posts = append(posts, post)
+	}
+
+	c.HTML(http.StatusOK, "posts.html", gin.H{
+		"posts": posts,
 	})
 }

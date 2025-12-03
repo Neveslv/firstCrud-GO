@@ -14,6 +14,7 @@ func SetupPostRoutes(r *gin.Engine) {
 		posts.GET("/posts/:id", handlers.BuscarPostPorId)
 		posts.PUT("/posts/:id", handlers.AtualizarPost)
 		posts.DELETE("/posts/:id", handlers.DeletarPost)
+		posts.POST("posts/:id", handlers.DeletarPost)
 
 		posts.GET("/posts/usuario/:user_id", handlers.ListarPostPorUsuario)
 

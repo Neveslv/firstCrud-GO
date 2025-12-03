@@ -17,9 +17,7 @@ func SetupRoutes(r *gin.Engine) {
 		c.HTML(http.StatusOK, "usuario_form.html", nil)
 	})
 
-	r.GET("/posts", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "posts.html", nil)
-	})
+	r.GET("/posts", handlers.ListarPostHTML)
 	r.GET("/posts/novo", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "post_form.html", nil)
 	})
