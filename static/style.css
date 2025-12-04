@@ -5,52 +5,70 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg: #000000; /* fundo preto */
+    --container-bg: rgba(18,18,18,0.96);
+    --bordo: #7b1121;        /* cor principal (bordô) */
+    --bordo-dark: #5a0e12;
+    --bordo-light: #a32b2b;
+    --muted-red: #b23a3a;
+    --accent: #ff6b6b;
+    --text: #e6e6e6;
+    --muted-text: #cfcfcf;
+    --card-shadow: rgba(123,17,33,0.18);
+    --border: rgba(255,255,255,0.04);
+    --danger: #c82333;
+    --success: #2f8a3a;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     padding: 20px;
-    color: #333;
 }
 
 /* ==================== CONTAINER PRINCIPAL ==================== */
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color: var(--text);
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px var(--card-shadow);
+    border: 1px solid var(--border);
 }
 
 /* ==================== TIPOGRAFIA ==================== */
 h1 {
-    color: #667eea;
+    color: var(--text); /* antes var(--bordo) */
     margin-bottom: 25px;
     font-size: 2.5em;
     font-weight: 700;
 }
 
 h2 {
-    color: #764ba2;
+    color: var(--muted-text); /* antes var(--bordo-light) */
     margin-top: 30px;
     margin-bottom: 20px;
     font-size: 1.8em;
 }
 
 h3 {
-    color: #667eea;
+    color: var(--text); /* antes var(--bordo) */
     margin-bottom: 10px;
     font-size: 1.4em;
 }
 
 p {
     line-height: 1.6;
-    color: #555;
+    color: var(--muted-text);
 }
 
 .subtitle {
-    color: #666;
+    color: var(--muted-text);
     font-size: 1.1em;
     margin-bottom: 30px;
 }
@@ -60,7 +78,7 @@ p {
     text-align: center;
     margin-bottom: 40px;
     padding-bottom: 30px;
-    border-bottom: 3px solid #667eea;
+    border-bottom: 3px solid var(--bordo);
 }
 
 .menu-section {
@@ -75,18 +93,18 @@ p {
 }
 
 .menu-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--bordo-dark) 0%, var(--bordo) 100%);
     padding: 30px;
     border-radius: 12px;
     text-decoration: none;
-    color: white;
+    color: var(--text);
     transition: transform 0.3s, box-shadow 0.3s;
     text-align: center;
 }
 
 .menu-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 15px 40px rgba(123,17,33,0.45);
 }
 
 .menu-icon {
@@ -95,13 +113,13 @@ p {
 }
 
 .menu-card h3 {
-    color: white;
+    color: var(--text); /* antes #fff */
     margin-bottom: 10px;
     font-size: 1.5em;
 }
 
 .menu-card p {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255,255,255,0.95);
     font-size: 0.95em;
 }
 
@@ -123,8 +141,8 @@ p {
     justify-content: center;
     gap: 10px;
     padding: 15px 25px;
-    background: #28a745;
-    color: white;
+    background: var(--bordo);
+    color: #fff;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
@@ -132,7 +150,7 @@ p {
 }
 
 .action-btn:hover {
-    background: #218838;
+    background: var(--bordo-light);
     transform: scale(1.05);
 }
 
@@ -144,8 +162,8 @@ p {
 .btn {
     display: inline-block;
     padding: 12px 28px;
-    background: #667eea;
-    color: white;
+    background: var(--bordo);
+    color: #fff;
     text-decoration: none;
     border-radius: 8px;
     border: none;
@@ -158,15 +176,15 @@ p {
 }
 
 .btn:hover {
-    background: #5568d3;
+    background: var(--bordo-dark);
     transform: translateY(-2px);
 }
 
 .btn-back {
     display: inline-block;
     padding: 10px 20px;
-    background: #6c757d;
-    color: white;
+    background: #3a3a3a;
+    color: #fff;
     text-decoration: none;
     border-radius: 8px;
     font-size: 14px;
@@ -176,14 +194,14 @@ p {
 }
 
 .btn-back:hover {
-    background: #5a6268;
+    background: #2f2f2f;
 }
 
 .btn-small {
     display: inline-block;
     padding: 8px 16px;
-    background: #667eea;
-    color: white;
+    background: var(--bordo);
+    color: #fff;
     text-decoration: none;
     border-radius: 6px;
     font-size: 14px;
@@ -193,12 +211,12 @@ p {
 }
 
 .btn-small:hover {
-    background: #5568d3;
+    background: var(--bordo-dark);
 }
 
 .btn-danger {
-    background: #dc3545;
-    color: white;
+    background: var(--danger);
+    color: #fff;
     border: none;
     padding: 8px 16px;
     border-radius: 6px;
@@ -209,12 +227,12 @@ p {
 }
 
 .btn-danger:hover {
-    background: #c82333;
+    background: #b71c1c;
 }
 
 .btn-success {
-    background: #28a745;
-    color: white;
+    background: var(--success);
+    color: #fff;
     border: none;
     padding: 12px 28px;
     border-radius: 8px;
@@ -225,7 +243,7 @@ p {
 }
 
 .btn-success:hover {
-    background: #218838;
+    background: #276b2f;
 }
 
 /* ==================== TABELAS ==================== */
@@ -233,14 +251,15 @@ table {
     width: 100%;
     margin-top: 25px;
     border-collapse: collapse;
-    background: white;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border);
 }
 
 table th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--bordo-dark) 0%, var(--bordo) 100%);
     color: white;
     padding: 15px;
     text-align: left;
@@ -253,7 +272,8 @@ table th {
 table td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #e9ecef;
+    color: var(--muted-text);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
     font-size: 14px;
 }
 
@@ -262,7 +282,7 @@ table tbody tr {
 }
 
 table tbody tr:hover {
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.02);
 }
 
 table tbody tr:last-child td {
@@ -276,10 +296,11 @@ table tbody tr:last-child td {
 /* ==================== FORMULÁRIOS ==================== */
 .form {
     margin-top: 30px;
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.01);
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
 }
 
 .form-group {
@@ -290,7 +311,7 @@ table tbody tr:last-child td {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #333;
+    color: var(--text);
     font-size: 14px;
 }
 
@@ -299,7 +320,9 @@ table tbody tr:last-child td {
 .form-group select {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid #e9ecef;
+    background: rgba(255,255,255,0.01);
+    color: var(--text);
+    border: 2px solid rgba(255,255,255,0.03);
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.3s, box-shadow 0.3s;
@@ -310,8 +333,8 @@ table tbody tr:last-child td {
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: var(--bordo);
+    box-shadow: 0 0 0 3px rgba(123,17,33,0.12);
 }
 
 .form-group textarea {
@@ -328,12 +351,12 @@ table tbody tr:last-child td {
 }
 
 .post-card {
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.01);
     padding: 25px;
     border-radius: 12px;
-    border-left: 5px solid #667eea;
+    border-left: 5px solid var(--bordo);
     transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .post-card:hover {
@@ -342,13 +365,13 @@ table tbody tr:last-child td {
 }
 
 .post-card h3 {
-    color: #667eea;
+    color: var(--text); /* antes var(--bordo) */
     margin-bottom: 15px;
     font-size: 1.4em;
 }
 
 .post-card p {
-    color: #555;
+    color: var(--muted-text);
     line-height: 1.6;
     margin-bottom: 15px;
 }
@@ -361,21 +384,21 @@ table tbody tr:last-child td {
 }
 
 .post-content {
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.01);
     padding: 25px;
     border-radius: 10px;
     margin-bottom: 30px;
-    border-left: 5px solid #667eea;
+    border-left: 5px solid var(--bordo);
 }
 
 .post-content p {
-    font-size: 1.1em;
+    color: var(--muted-text);
     line-height: 1.8;
     margin-bottom: 15px;
 }
 
 .post-content small {
-    color: #6c757d;
+    color: #9a9a9a;
     font-size: 0.9em;
 }
 
@@ -383,16 +406,16 @@ table tbody tr:last-child td {
 .comentarios-section {
     margin-top: 40px;
     padding-top: 30px;
-    border-top: 2px solid #e9ecef;
+    border-top: 2px solid rgba(255,255,255,0.04); /* antes #e9ecef */
 }
 
 .comentario {
-    background: white;
+    background: rgba(255,255,255,0.01);
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 15px;
-    border-left: 4px solid #764ba2;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--bordo);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     transition: transform 0.2s;
 }
 
@@ -401,68 +424,58 @@ table tbody tr:last-child td {
 }
 
 .comentario strong {
-    color: #667eea;
+    color: var(--text); /* antes var(--bordo-light) */
     font-size: 1.05em;
     display: block;
     margin-bottom: 8px;
 }
 
 .comentario p {
-    color: #333;
+    color: var(--muted-text);
     line-height: 1.6;
     margin-bottom: 10px;
 }
 
 .comentario small {
-    color: #6c757d;
+    color: #9a9a9a;
     font-size: 0.85em;
 }
 
 .comentario-form {
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.02); /* antes #f8f9fa */
     padding: 25px;
     border-radius: 10px;
     margin-bottom: 30px;
+    color: var(--text);
 }
 
 /* ==================== MENSAGENS E ESTADOS ==================== */
 .no-data {
-    text-align: center;
-    padding: 40px;
-    color: #6c757d;
-    font-size: 1.1em;
-    background: #f8f9fa;
+    background: rgba(255,255,255,0.01);
+    color: #9a9a9a;
     border-radius: 10px;
-    margin-top: 20px;
 }
 
 .error-box {
-    background: #f8d7da;
-    border: 2px solid #f5c6cb;
-    color: #721c24;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
+    background: rgba(200,40,40,0.06);
+    border: 2px solid rgba(200,40,40,0.18);
+    color: #ffb3b3;
 }
 
 .error-box h1 {
-    color: #721c24;
-    margin-bottom: 15px;
+    color: #ffb3b3;
 }
 
 .success-box {
-    background: #d4edda;
-    border: 2px solid #c3e6cb;
-    color: #155724;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
+    background: rgba(50,150,70,0.05);
+    border: 2px solid rgba(50,150,70,0.14);
+    color: #d7ffd9;
 }
 
 /* ==================== SEPARADORES ==================== */
 hr {
     border: none;
-    border-top: 2px solid #e9ecef;
+    border-top: 2px solid rgba(255,255,255,0.03);
     margin: 30px 0;
 }
 
