@@ -10,49 +10,45 @@ import (
 )
 
 func CriarComentario(c *gin.Context) {
-	postID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "ID do post inválido",
-		})
-		return
-	}
-	var input model.ComentarioInput
+	postID := c.Param("id")
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":    "Dados inválidos",
-			"detalhes": err.Error(),
-		})
-		return
+	var comentario model.Comentarios
+
+	contentType := c.GetHeader("Content-Type")
+
+	if contentType == "application/json" {
+		if err := c.ShouldBindJSON(&comentario); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido", "detalhes": err.Error()})
+			return
+		}
+	} else {
+		comentario.Content = c.PostForm("content")
+		comentario.UserID, _ = strconv.Atoi(c.PostForm("user_id"))
 	}
 
-	userIDstr := c.Query("user_id")
-	if userIDstr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "user_id é obrigatório",
-		})
+	if comentario.Content == "" || comentario.UserID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Conteúdo e User ID são obrigatórios"})
 		return
 	}
 
-	userID, _ := strconv.Atoi(userIDstr)
-
-	var comentarioID int
+	var newID int
 	query := "INSERT INTO comentarios (post_id, user_id, content) VALUES ($1, $2, $3) RETURNING id"
-	err = database.DB.QueryRow(query, postID, userID, input.Content).Scan(&comentarioID)
+
+	err := database.DB.QueryRow(query, postID, comentario.UserID, comentario.Content).Scan(&newID)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":    "Erro ao criar um comentario",
-			"detalhes": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar comentário", "detalhes": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"mensagem": "O comentario foi criado com sucesso",
-		"id":       comentarioID,
-	})
+	if contentType == "application/json" {
+		c.JSON(http.StatusCreated, gin.H{
+			"mensagem": "Comentário criado com sucesso",
+			"id":       newID,
+		})
+	} else {
+		c.Redirect(http.StatusFound, "/posts/"+postID+"/detalhes")
+	}
 }
 
 func ListarComentarioPorPost(c *gin.Context) {
@@ -66,11 +62,9 @@ func ListarComentarioPorPost(c *gin.Context) {
         WHERE co.post_id = $1
         ORDER BY co.created_at ASC
     `, postId)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":    "Erro ao buscar os comentarios",
-			"detalhes": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar comentários", "detalhes": err.Error()})
 		return
 	}
 	defer rows.Close()
@@ -78,20 +72,16 @@ func ListarComentarioPorPost(c *gin.Context) {
 	var comentarios []model.Comentarios
 
 	for rows.Next() {
-		var comentario model.Comentarios
+		var com model.Comentarios
 		err := rows.Scan(
-			&comentario.ID, &comentario.PostID, &comentario.UserID,
-			&comentario.Content, &comentario.CreatedAt,
-			&comentario.UserNome, &comentario.UserEmail,
+			&com.ID, &com.PostID, &com.UserID, &com.Content, &com.CreatedAt,
+			&com.UserNome, &com.UserEmail,
 		)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error":    "Erro ao processar dados",
-				"detalhes": err.Error(),
-			})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar dados"})
 			return
 		}
-		comentarios = append(comentarios, comentario)
+		comentarios = append(comentarios, com)
 	}
 
 	if comentarios == nil {
@@ -102,83 +92,101 @@ func ListarComentarioPorPost(c *gin.Context) {
 }
 
 func BuscarComentarioPorId(c *gin.Context) {
-	ID := c.Param("id")
-	var comentario model.Comentarios
+	id := c.Param("id")
+	var com model.Comentarios
+
 	query := `
-        SELECT 
-            co.id, co.post_id, co.user_id, co.content, co.created_at,
-            u.nome, u.email
+        SELECT co.id, co.post_id, co.user_id, co.content, co.created_at, u.nome, u.email
         FROM comentarios co
         INNER JOIN usuario u ON co.user_id = u.id
         WHERE co.id = $1
     `
-	err := database.DB.QueryRow(query, ID).Scan(&comentario.ID, &comentario.PostID, &comentario.UserID, &comentario.Content, &comentario.CreatedAt, &comentario.UserNome, &comentario.UserEmail)
+	err := database.DB.QueryRow(query, id).Scan(
+		&com.ID, &com.PostID, &com.UserID, &com.Content, &com.CreatedAt,
+		&com.UserNome, &com.UserEmail,
+	)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Comentario não encontrado",
-		})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Comentário não encontrado"})
 		return
 	}
-	c.JSON(http.StatusOK, comentario)
+	c.JSON(http.StatusOK, com)
 }
 
 func AtualizarComentario(c *gin.Context) {
 	id := c.Param("id")
-	var input model.ComentarioInput
+	var comentario model.Comentarios
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":    "Dados inválidos",
-			"detalhes": err.Error(),
-		})
+	contentType := c.GetHeader("Content-Type")
+
+	if contentType == "application/json" {
+		if err := c.ShouldBindJSON(&comentario); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
+			return
+		}
+	} else {
+		comentario.Content = c.PostForm("content")
+	}
+
+	if comentario.Content == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Conteúdo é obrigatório"})
 		return
 	}
 
-	result, err := database.DB.Exec(`
-        UPDATE comentarios 
-        SET content = $1
-        WHERE id = $2
-    `, input.Content, id)
+	var postID int
+	database.DB.QueryRow("SELECT post_id FROM comentarios WHERE id = $1", id).Scan(&postID)
+
+	query := "UPDATE comentarios SET content = $1 WHERE id = $2"
+	result, err := database.DB.Exec(query, comentario.Content, id)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Erro ao atualizar o comentário",
-		})
-		return
-	}
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Comentario não encontrado",
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"mensagem": "Comentario atualizado com sucesso",
-	})
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Comentário não encontrado"})
+		return
+	}
+
+	if contentType == "application/json" {
+		c.JSON(http.StatusOK, gin.H{"mensagem": "Comentário atualizado"})
+	} else {
+
+		c.Redirect(http.StatusFound, "/posts/"+strconv.Itoa(postID)+"/detalhes")
+	}
 }
 
 func DeletarComentario(c *gin.Context) {
 	id := c.Param("id")
+
+	var postID int
+	err := database.DB.QueryRow("SELECT post_id FROM comentarios WHERE id = $1", id).Scan(&postID)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Comentário não encontrado"})
+		return
+	}
+
 	result, err := database.DB.Exec("DELETE FROM comentarios WHERE id = $1", id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Comentario não encontrado",
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar"})
 		return
 	}
 
-	rowsaffected, _ := result.RowsAffected()
-	if rowsaffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Comentario não encontrado",
-		})
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Comentário não encontrado"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"mensagem": "Comentario deletado com sucesso",
-	})
+	contentType := c.GetHeader("Content-Type")
+
+	if contentType == "application/json" {
+		c.JSON(http.StatusOK, gin.H{"mensagem": "Comentário deletado"})
+	} else {
+
+		c.Redirect(http.StatusFound, "/posts/"+strconv.Itoa(postID)+"/detalhes")
+	}
 }

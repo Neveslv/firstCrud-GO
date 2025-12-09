@@ -21,8 +21,6 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/posts/novo", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "post_form.html", nil)
 	})
-	r.GET("/posts/:id/detalhes", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "post_detalhes.html", nil)
-	})
+	r.GET("/posts/:id/detalhes", handlers.ExibirDetalhesPostHTML)
 
 }

@@ -312,3 +312,55 @@ func ListarPostHTML(c *gin.Context) {
 		"posts": posts,
 	})
 }
+
+func ExibirDetalhesPostHTML(c *gin.Context) {
+	id := c.Param("id")
+
+	var post model.Post
+	queryPost := `
+		SELECT p.id, p.user_id, p.titulo, p.content, p.created_at, u.nome, u.email 
+		FROM posts p 
+		LEFT JOIN usuario u ON p.user_id = u.id 
+		WHERE p.id = $1`
+
+	err := database.DB.QueryRow(queryPost, id).Scan(&post.ID, &post.UserID, &post.Titulo, &post.Content, &post.CreatedAt, &post.UserName, &post.UserEmail)
+	if err != nil {
+		c.HTML(http.StatusNotFound, "post_detalhes.html", gin.H{
+			"error": "Post inexistente",
+		})
+		return
+	}
+
+	rows, err := database.DB.Query(`
+		SELECT c.id, c.user_id, c.content, c.created_at, u.nome, u.email 
+		FROM comentarios c 
+		LEFT JOIN usuario u ON c.user_id = u.id
+		WHERE c.post_id = $1
+		ORDER BY c.created_at DESC `, id)
+
+	var comentarios []model.Comentarios
+
+	if err == nil {
+		defer rows.Close()
+		for rows.Next() {
+			var comentario model.Comentarios
+
+			err := rows.Scan(
+				&comentario.ID,
+				&comentario.UserID,
+				&comentario.Content,
+				&comentario.CreatedAt,
+				&comentario.UserNome,
+				&comentario.UserEmail,
+			)
+
+			if err == nil {
+				comentarios = append(comentarios, comentario)
+			}
+			c.HTML(http.StatusOK, "post_detalhes.html", gin.H{
+				"post":        post,
+				"comentarios": comentarios,
+			})
+		}
+	}
+}
