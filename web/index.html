@@ -3,44 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Go - Sistema Completo</title>
+    <title>Dashboard - CRUD Go</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="dashboard-header">
-        <h1>CRUD Go — Sistema de Gerenciamento</h1>
-        <p class="subtitle">Sistema de gerenciamento com Go, Gin Framework e PostgreSQL</p>
-    </div>
 
-    <div class="menu-section">
-        <h2>Gerenciamento</h2>
-        <div class="menu">
-            <a href="/usuarios" class="menu-card">
-                <div class="menu-icon" aria-hidden="true"></div>
-                <h3>Gerenciar Usuários</h3>
-                <p>Criar, visualizar e remover usuários do sistema</p>
-            </a>
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>BLOGs</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/" class="active"> <span class="nav-icon">📊</span> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios"> <span class="nav-icon">👥</span> Usuários </a></li>
+        <li class="nav-item"><a href="/posts"> <span class="nav-icon">📝</span> Posts </a></li>
+    </ul>
+</aside>
 
-            <a href="/posts" class="menu-card">
-                <div class="menu-icon" aria-hidden="true"></div>
-                <h3>Gerenciar Posts</h3>
-                <p>Criar posts, editar conteúdo e visualizar comentários</p>
-            </a>
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Visão Geral</h1>
+            <p>Bem-vindo ao sistema, Nevão.</p>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <a href="/usuarios" class="stat-card">
+            <h3>Gerenciar Usuários</h3>
+            <p>Adicionar, listar e remover usuários da plataforma.</p>
+        </a>
+
+        <a href="/posts" class="stat-card">
+            <h3>Gerenciar Posts</h3>
+            <p>Criar conteúdo, moderar discussões e comentários.</p>
+        </a>
+
+        <div class="stat-card" style="opacity: 0.5; cursor: not-allowed;">
+            <h3>Configurações</h3>
+            <p>Em breve: Ajustes do sistema.</p>
         </div>
     </div>
-
-    <div class="quick-actions">
-        <h2>Ações Rápidas</h2>
-        <div class="actions-grid">
-            <a href="/usuarios/novo" class="action-btn">
-                Novo Usuário
-            </a>
-            <a href="/posts/novo" class="action-btn">
-                Novo Post
-            </a>
-        </div>
-    </div>
-</div>
+</main>
 </body>
 </html>

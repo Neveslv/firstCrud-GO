@@ -3,40 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Posts</title>
+    <title>Posts - CRUD Go</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>📝 Gerenciar Posts</h1>
 
-    <div class="header-actions">
-        <a href="/" class="btn-back">← Voltar ao Dashboard</a>
-        <a href="/posts/novo" class="btn">➕ Novo Post</a>
-    </div>
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>BLOGs</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/"> <span class="nav-icon">📊</span> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios"> <span class="nav-icon">👥</span> Usuários </a></li>
+        <li class="nav-item"><a href="/posts" class="active"> <span class="nav-icon">📝</span> Posts </a></li>
+    </ul>
+</aside>
+
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Posts</h1>
+            <p>Conteúdo publicado</p>
+        </div>
+        <a href="/posts/novo" class="btn btn-primary">➕ Novo Post</a>
+    </header>
 
     {{if .posts}}
-    <div class="posts-grid">
+    <div class="dashboard-grid">
         {{range .posts}}
         <div class="post-card">
             <h3>{{.Titulo}}</h3>
-            <p>{{if gt (len .Content) 150}}{{slice .Content 0 150}}...{{else}}{{.Content}}{{end}}</p>
-            <small class="post-meta">
-                Por: Usuário #{{.UserID}} | {{.CreatedAt.Format "02/01/2006 15:04"}}
-            </small>
-            <div class="post-actions">
-                <a href="/posts/{{.ID}}/detalhes" class="btn-small">💬 Ver Comentários</a>
-                <form action="/api/posts/{{.ID}}" method="POST" class="inline-form" onsubmit="return confirm('Tem certeza que deseja deletar este post?');">
+            <p>{{if gt (len .Content) 100}}{{slice .Content 0 100}}...{{else}}{{.Content}}{{end}}</p>
+            <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted);">
+                <strong>{{.UserName}}</strong> • {{.CreatedAt.Format "02/01/2006"}}
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="/posts/{{.ID}}/detalhes" class="btn btn-back" style="font-size: 0.8rem;">💬 Comentários</a>
+
+                <form action="/api/posts/{{.ID}}" method="POST" class="inline-form" onsubmit="return confirm('Deletar post?');">
                     <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn-danger">🗑️ Deletar</button>
+                    <button type="submit" class="btn btn-danger" style="padding: 8px 12px; font-size: 0.8rem;">🗑️</button>
                 </form>
             </div>
         </div>
         {{end}}
     </div>
     {{else}}
-    <p class="no-data">Nenhum post cadastrado ainda. Clique em "Novo Post" para começar!</p>
+    <div class="post-card" style="text-align: center;">
+        <p>Nenhum post publicado.</p>
+        <br>
+        <a href="/posts/novo" class="btn btn-primary">Criar Primeiro Post</a>
+    </div>
     {{end}}
-</div>
+</main>
 </body>
 </html>

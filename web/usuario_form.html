@@ -5,25 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Usuário</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>➕ Novo Usuário</h1>
-    <a href="/usuarios" class="btn-back">← Voltar para Usuários</a>
 
-    <form action="/api/usuarios" method="POST" class="form">
-        <div class="form-group">
-            <label for="nome">Nome Completo:</label>
-            <input type="text" id="nome" name="nome" placeholder="Digite o nome completo" required maxlength="100">
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>BLOGs</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/"> <span class="nav-icon">📊</span> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios" class="active"> <span class="nav-icon">👥</span> Usuários </a></li>
+        <li class="nav-item"><a href="/posts"> <span class="nav-icon">📝</span> Posts </a></li>
+    </ul>
+</aside>
+
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Novo Usuário</h1>
         </div>
+        <a href="/usuarios" class="btn btn-back">← Voltar</a>
+    </header>
 
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="exemplo@email.com" required maxlength="100">
-        </div>
+    <div class="form-container">
+        <form action="/api/usuarios" method="POST">
+            <div class="form-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" placeholder="Digite o nome completo" required maxlength="100">
+            </div>
 
-        <button type="submit" class="btn-success">💾 Salvar Usuário</button>
-    </form>
-</div>
+            <div class="form-group">
+                <label for="email">Email Corporativo</label>
+                <input type="email" id="email" name="email" placeholder="exemplo@empresa.com" required maxlength="100">
+            </div>
+
+            <button type="submit" class="btn btn-success">Salvar Registro</button>
+        </form>
+    </div>
+</main>
 </body>
 </html>

@@ -3,61 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.post.Titulo}}</title>
+    <title>Detalhes do Post</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
 </head>
 <body>
-<div class="container">
-    <a href="/posts" class="btn-back">← Voltar para Posts</a>
 
-    <h1>{{.post.Titulo}}</h1>
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>BLOGs</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/"> <span class="nav-icon">📊</span> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios"> <span class="nav-icon">👥</span> Usuários </a></li>
+        <li class="nav-item"><a href="/posts" class="active"> <span class="nav-icon">📝</span> Posts </a></li>
+    </ul>
+</aside>
 
-    <div class="post-content">
-        <p>{{.post.Content}}</p>
-        <small>Por: Usuário #{{.post.UserID}} | {{.post.CreatedAt.Format "02/01/2006 15:04"}}</small>
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>{{.post.Titulo}}</h1>
+            <p>Publicado por <strong>{{.post.UserName}}</strong> em {{.post.CreatedAt.Format "02/01/2006 às 15:04"}}</p>
+        </div>
+        <a href="/posts" class="btn btn-back">← Voltar</a>
+    </header>
+
+    <div class="post-card" style="border-left: none; background: rgba(255,255,255,0.01);">
+        <p style="white-space: pre-wrap; font-size: 1.1rem; color: var(--text-main);">{{.post.Content}}</p>
     </div>
 
-    <hr>
-
     <div class="comentarios-section">
-        <h2>💬 Comentários</h2>
+        <h2 style="font-size: 1.4rem; margin-bottom: 20px;">Discussão</h2>
 
-        <div class="comentario-form">
-            <h3>Adicionar Comentário</h3>
-            <form action="/api/posts/{{.post.ID}}/comentarios" method="POST" class="form">
+        <div class="form-container" style="margin-bottom: 40px; border-left: 3px solid var(--border);">
+            <form action="/api/posts/{{.post.ID}}/comentarios" method="POST">
                 <div class="form-group">
-                    <label for="user_id">Seu ID de Usuário:</label>
-                    <input type="number" id="user_id" name="user_id" placeholder="Digite seu ID" required min="1">
+                    <label for="user_id">Seu ID</label>
+                    <input type="number" id="user_id" name="user_id" placeholder="Quem é você?" required min="1" style="width: 150px;">
                 </div>
-
                 <div class="form-group">
-                    <label for="content">Comentário:</label>
-                    <textarea id="content" name="content" rows="4" placeholder="Escreva seu comentário..." required></textarea>
+                    <textarea id="content" name="content" rows="3" placeholder="Adicione um comentário..." required></textarea>
                 </div>
-
-                <button type="submit" class="btn-success">💾 Comentar</button>
+                <button type="submit" class="btn btn-primary">Enviar Comentário</button>
             </form>
         </div>
 
         {{if .comentarios}}
         {{range .comentarios}}
         <div class="comentario">
-            <strong>Usuário #{{.UserID}}</strong>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong style="color: var(--primary);">{{.UserNome}}</strong>
+                <small style="color: var(--text-muted);">{{.CreatedAt.Format "02/01/06 15:04"}}</small>
+            </div>
             <p>{{.Content}}</p>
-            <small>{{.CreatedAt.Format "02/01/2006 15:04"}}</small>
 
-            <div class="comentario-actions">
-                <form action="/api/comentarios/{{.ID}}" method="POST" class="inline-form" onsubmit="return confirm('Tem certeza que deseja deletar este comentário?');">
+            <div style="margin-top: 10px; text-align: right;">
+                <form action="/api/comentarios/{{.ID}}" method="POST" style="display:inline;" onsubmit="return confirm('Apagar comentário?');">
                     <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn-danger">🗑️ Deletar</button>
+                    <button type="submit" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.8rem;">Excluir</button>
                 </form>
             </div>
         </div>
         {{end}}
         {{else}}
-        <p class="no-data">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+        <p style="color: var(--text-muted); font-style: italic;">Nenhum comentário ainda. Seja o primeiro!</p>
         {{end}}
     </div>
-</div>
+</main>
 </body>
-</html>
+</html>w

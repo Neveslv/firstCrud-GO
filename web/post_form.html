@@ -5,31 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Post</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>➕ Criar Novo Post</h1>
-    <a href="/posts" class="btn-back">← Voltar para Posts</a>
 
-    <form action="/api/posts" method="POST" class="form">
-        <div class="form-group">
-            <label for="user_id">Autor (ID do Usuário):</label>
-            <input type="number" id="user_id" name="user_id" placeholder="Digite o ID do usuário" required min="1">
-            <small>Informe o ID de um usuário existente</small>
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>BLOGs</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/"> <span class="nav-icon">📊</span> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios"> <span class="nav-icon">👥</span> Usuários </a></li>
+        <li class="nav-item"><a href="/posts" class="active"> <span class="nav-icon">📝</span> Posts </a></li>
+    </ul>
+</aside>
+
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Criar Publicação</h1>
         </div>
+        <a href="/posts" class="btn btn-back">← Voltar</a>
+    </header>
 
-        <div class="form-group">
-            <label for="titulo">Título do Post:</label>
-            <input type="text" id="titulo" name="titulo" placeholder="Digite o título do post" required maxlength="200">
-        </div>
+    <div class="form-container">
+        <form action="/api/posts" method="POST">
+            <div class="form-group">
+                <label for="user_id">Autor (ID)</label>
+                <input type="number" id="user_id" name="user_id" placeholder="ID do usuário autor" required min="1">
+            </div>
 
-        <div class="form-group">
-            <label for="content">Conteúdo:</label>
-            <textarea id="content" name="content" rows="10" placeholder="Escreva o conteúdo do post..." required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="titulo">Título</label>
+                <input type="text" id="titulo" name="titulo" placeholder="Título chamativo" required maxlength="200">
+            </div>
 
-        <button type="submit" class="btn-success">💾 Publicar Post</button>
-    </form>
-</div>
+            <div class="form-group">
+                <label for="content">Conteúdo</label>
+                <textarea id="content" name="content" rows="8" placeholder="Escreva o conteúdo aqui..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Publicar</button>
+        </form>
+    </div>
+</main>
 </body>
 </html>

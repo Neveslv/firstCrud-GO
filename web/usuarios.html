@@ -3,49 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Usuários</title>
+    <title>Usuários - CRUD Go</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>👤 Gerenciar Usuários</h1>
 
-    <div class="header-actions">
-        <a href="/" class="btn-back">← Voltar ao Dashboard</a>
-        <a href="/usuarios/novo" class="btn">➕ Novo Usuário</a>
-    </div>
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>BLOGs</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/"> <span class="nav-icon">📊</span> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios" class="active"> <span class="nav-icon">👥</span> Usuários </a></li>
+        <li class="nav-item"><a href="/posts"> <span class="nav-icon">📝</span> Posts </a></li>
+    </ul>
+</aside>
+
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Usuários</h1>
+            <p>Gestão de contas do sistema</p>
+        </div>
+        <a href="/usuarios/novo" class="btn btn-primary">➕ Novo Usuário</a>
+    </header>
 
     {{if .usuarios}}
-    <table class="data-table">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Criado em</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{range .usuarios}}
-        <tr>
-            <td>{{.ID}}</td>
-            <td>{{.Nome}}</td>
-            <td>{{.Email}}</td>
-            <td>{{.CreatedAt.Format "02/01/2006 15:04"}}</td>
-            <td>
-                <form action="/api/usuarios/{{.ID}}" method="POST" class="inline-form" onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn-danger">🗑️ Deletar</button>
-                </form>
-            </td>
-        </tr>
-        {{end}}
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Criado em</th>
+                <th style="text-align: right;">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .usuarios}}
+            <tr>
+                <td>#{{.ID}}</td>
+                <td><strong>{{.Nome}}</strong></td>
+                <td>{{.Email}}</td>
+                <td>{{.CreatedAt.Format "02/01/2006"}}</td>
+                <td style="text-align: right;">
+                    <form action="/api/usuarios/{{.ID}}" method="POST" style="display:inline;" onsubmit="return confirm('Confirmar exclusão?');">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-danger">Remover</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
     {{else}}
-    <p class="no-data">Nenhum usuário cadastrado ainda. Clique em "Novo Usuário" para começar!</p>
+    <div class="post-card" style="text-align: center;">
+        <p>Nenhum usuário encontrado.</p>
+        <br>
+        <a href="/usuarios/novo" class="btn btn-primary">Criar Primeiro Usuário</a>
+    </div>
     {{end}}
-</div>
+</main>
 </body>
 </html>

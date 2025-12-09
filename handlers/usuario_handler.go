@@ -59,7 +59,7 @@ func CriarUsuario(c *gin.Context) {
 			"email":    usuario.Email,
 		})
 	} else {
-		c.Redirect(http.StatusFound, "/usuarios")
+		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+criado+com+sucesso!&type=success")
 	}
 }
 
@@ -163,7 +163,7 @@ func AtualizarUsuario(c *gin.Context) {
 			"mensagem": "Usuário atualizado com sucesso",
 		})
 	} else {
-		c.Redirect(http.StatusFound, "/usuarios")
+		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+atualizado!&type=success")
 	}
 }
 
@@ -188,9 +188,15 @@ func DeletarUsuario(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"mensagem": "Usuário deletado com sucesso",
-	})
+	contentType := c.GetHeader("Content-Type")
+
+	if contentType == "application/json" {
+		c.JSON(http.StatusOK, gin.H{
+			"mensagem": "Usuário deletado com sucesso",
+		})
+	} else {
+		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+removido+com+sucesso!&type=success")
+	}
 }
 
 func ListarUsuariosHTML(c *gin.Context) {

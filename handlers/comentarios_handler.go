@@ -47,7 +47,7 @@ func CriarComentario(c *gin.Context) {
 			"id":       newID,
 		})
 	} else {
-		c.Redirect(http.StatusFound, "/posts/"+postID+"/detalhes")
+		c.Redirect(http.StatusFound, "/posts/"+postID+"/detalhes?msg=Comentário+enviado!&type=success")
 	}
 }
 
@@ -153,8 +153,7 @@ func AtualizarComentario(c *gin.Context) {
 	if contentType == "application/json" {
 		c.JSON(http.StatusOK, gin.H{"mensagem": "Comentário atualizado"})
 	} else {
-
-		c.Redirect(http.StatusFound, "/posts/"+strconv.Itoa(postID)+"/detalhes")
+		c.Redirect(http.StatusFound, "/posts/"+strconv.Itoa(postID)+"/detalhes?msg=Comentário+editado!&type=success")
 	}
 }
 
@@ -187,6 +186,6 @@ func DeletarComentario(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"mensagem": "Comentário deletado"})
 	} else {
 
-		c.Redirect(http.StatusFound, "/posts/"+strconv.Itoa(postID)+"/detalhes")
+		c.Redirect(http.StatusFound, "/posts/"+strconv.Itoa(postID)+"/detalhes?msg=Comentário+apagado!&type=success")
 	}
 }

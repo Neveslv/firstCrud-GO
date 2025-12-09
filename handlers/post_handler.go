@@ -92,7 +92,7 @@ func CriarPost(c *gin.Context) {
 			"id":       postID,
 		})
 	} else {
-		c.Redirect(http.StatusFound, "/posts")
+		c.Redirect(http.StatusFound, "/posts?msg=Post+publicado!&type=success")
 	}
 }
 
@@ -224,13 +224,13 @@ func AtualizarPost(c *gin.Context) {
 			"mensagem": "Post atualizado com sucesso",
 		})
 	} else {
-		c.Redirect(http.StatusFound, "/posts")
+		c.Redirect(http.StatusFound, "/posts?msg=Post+editado!&type=success")
 	}
 }
 
 func DeletarPost(c *gin.Context) {
 	id := c.Param("id")
-	result, err := database.DB.Exec("DELETE post WHERE id = $1`", id)
+	result, err := database.DB.Exec("DELETE FROM posts WHERE id = $1", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Erro ao deletar o post",
@@ -246,9 +246,13 @@ func DeletarPost(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"mensagem": "Post deletado com sucesso",
-	})
+	contentType := c.GetHeader("Content-Type")
+
+	if contentType == "application/json" {
+		c.JSON(http.StatusOK, gin.H{"mensagem": "Post deletado com sucesso"})
+	} else {
+		c.Redirect(http.StatusFound, "/posts?msg=Post+removido!&type=success")
+	}
 }
 
 func ListarPostHTML(c *gin.Context) {
@@ -357,10 +361,10 @@ func ExibirDetalhesPostHTML(c *gin.Context) {
 			if err == nil {
 				comentarios = append(comentarios, comentario)
 			}
-			c.HTML(http.StatusOK, "post_detalhes.html", gin.H{
-				"post":        post,
-				"comentarios": comentarios,
-			})
 		}
 	}
+	c.HTML(http.StatusOK, "post_detalhes.html", gin.H{
+		"post":        post,
+		"comentarios": comentarios,
+	})
 }
