@@ -30,7 +30,9 @@ Abra o terminal e execute:
 bash
 git clone [https://github.com/seu-usuario/firstcrud-go.git](https://github.com/seu-usuario/firstcrud-go.git)
 cd firstcrud-go
-2️⃣ Configurar o Banco de Dados
+
+### 2️⃣ Configurar o Banco de Dados
+
 Crie um banco PostgreSQL chamado crud_go e execute o script abaixo para criar as tabelas necessárias:
 
 ```SQL
@@ -61,7 +63,8 @@ CREATE TABLE comentarios (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-3️⃣ Configurar Variáveis de Ambiente
+### 3️⃣ Configurar Variáveis de Ambiente
+
 Crie um arquivo .env na raiz do projeto com as credenciais do seu banco, seguindo a estrutura:
 
 ```Snippet de código
@@ -72,7 +75,8 @@ DB_USER=postgres
 DB_PASSWORD=sua_senha
 DB_NAME=crud_go
 ```
-4️⃣ Executar o Projeto
+### 4️⃣ Executar o Projeto
+
 Instale as dependências e rode no terminal:
 ```Bash
 
