@@ -5,7 +5,6 @@ import (
 	"CrudGO/model"
 	"database/sql"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,38 +41,12 @@ func CriarPost(c *gin.Context) {
 
 	var userID int
 	var err error
-	if contentType == "application/json" {
-
-		userIDStr := c.Query("user_id")
-		if userIDStr == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "user_id é obrigatório",
-			})
-			return
-		}
-		userID, err = strconv.Atoi(userIDStr)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "user_id inválido",
-			})
-			return
-		}
-	} else {
-		userIDStr := c.PostForm("user_id")
-		if userIDStr == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "user_id inválido",
-			})
-			return
-		}
-		userID, err = strconv.Atoi(userIDStr)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "user_id inválido",
-			})
-			return
-		}
+	userIDInterface, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
 	}
+	userID = int(userIDInterface.(float64))
 
 	var postID int
 	query := "INSERT INTO posts (user_id, titulo, content) VALUES ($1, $2, $3) RETURNING id"

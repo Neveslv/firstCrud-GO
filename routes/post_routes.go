@@ -2,12 +2,14 @@ package routes
 
 import (
 	"CrudGO/handlers"
+	"CrudGO/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupPostRoutes(r *gin.Engine) {
 	posts := r.Group("/api")
+	posts.Use(middleware.AutentMiddleware())
 	{
 		posts.POST("/posts", handlers.CriarPost)
 		posts.GET("/posts", handlers.ListarPosts)

@@ -21,6 +21,8 @@ func main() {
 	routes.SetupUsuarioRoutes(r)
 	routes.SetupPostRoutes(r)
 	routes.SetupComentarioRoutes(r)
+	routes.SetupLoginRoutes(r)
+	routes.SetupRegistroRoutes(r)
 
 	log.Println("http://localhost:8080")
 	err := r.Run(":8080")

@@ -1,12 +1,12 @@
 /* ==================== RESET E VARIÁVEIS ==================== */
 :root {
-    --bg-app: #0d1117;        /* Fundo super escuro (estilo GitHub/Mongo) */
+    --bg-app: #0d1117;        /* Fundo super escuro */
     --bg-sidebar: #010409;    /* Fundo lateral */
     --bg-card: #161b22;       /* Fundo dos cards/forms */
     --border: #30363d;        /* Bordas sutis */
     --primary: #8a1c2e;       /* Seu Bordô */
     --primary-hover: #a8253a;
-    --text-main: #c9d1d9;     /* Texto claro (não branco puro) */
+    --text-main: #c9d1d9;     /* Texto claro  */
     --text-muted: #8b949e;
     --success: #238636;
     --danger: #da3633;

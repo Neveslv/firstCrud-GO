@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - GoMaster</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/main.js"></script>
+    <style>
+        /* Reutilizando o estilo do Login para manter consistência */
+        body.login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, #161b22, #0d1117);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 450px; /* Um pouco mais largo que o login */
+            padding: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .login-brand {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .login-brand span { color: var(--primary); }
+    </style>
+</head>
+<body class="login-page">
+
+<div class="login-card">
+    <div class="login-brand"><span>GO</span>MASTER</div>
+    <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Crie sua conta e comece a postar</p>
+
+    {{if .error}}
+    <div class="error-box" style="margin-bottom: 20px; padding: 10px; border-radius: 6px;">
+        {{.error}}
+    </div>
+    {{end}}
+
+    <form action="/registrar" method="POST">
+        <div class="form-group">
+            <label for="nome">Nome Completo</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome" required minlength="3">
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+            Criar Conta
+        </button>
+    </form>
+
+    <div style="margin-top: 25px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
+        Já tem uma conta? <a href="/login" style="color: var(--primary);">Fazer Login</a>
+    </div>
+</div>
+
+</body>
+</html>
