@@ -2,12 +2,14 @@ package routes
 
 import (
 	"CrudGO/handlers"
+	"CrudGO/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupComentarioRoutes(r *gin.Engine) {
 	comentarios := r.Group("/api")
+	comentarios.Use(middleware.AutentMiddleware())
 	{
 		comentarios.GET("/comentarios/:id", handlers.BuscarComentarioPorId)
 		comentarios.PUT("/comentarios/:id", handlers.AtualizarComentario)

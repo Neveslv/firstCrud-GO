@@ -2,12 +2,14 @@ package routes
 
 import (
 	"CrudGO/handlers"
+	"CrudGO/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupUsuarioRoutes(r *gin.Engine) {
 	usuarios := r.Group("/api")
+	usuarios.Use(middleware.AutentMiddleware())
 	{
 		usuarios.POST("/usuarios", handlers.CriarUsuario)
 		usuarios.GET("/usuarios", handlers.ListarUsuarios)

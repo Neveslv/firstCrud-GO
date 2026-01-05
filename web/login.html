@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GoMaster</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
+    <style>
+        /* Estilo Exclusivo para a tela de Login */
+        body.login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, #161b22, #0d1117);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .login-brand {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        .login-brand span { color: var(--primary); }
+        .login-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+<div class="login-card">
+    <div class="login-brand"><span>GO</span>BLOGs</div>
+    <p class="login-subtitle">Entre para acessar o sistema</p>
+
+    {{if .error}}
+    <div class="error-box" style="margin-bottom: 20px; padding: 10px; border-radius: 6px; font-size: 0.9rem;">
+        {{.error}}
+    </div>
+    {{end}}
+
+    <form action="/login" method="POST">
+        <div class="form-group" style="text-align: left;">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="admin@gomaster.com" required>
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;">
+            Entrar no Sistema 🚀
+        </button>
+    </form>
+
+    <div style="margin-top: 25px; font-size: 0.85rem; color: var(--text-muted);">
+        Ainda não tem conta? <a href="/registrar" style="color: var(--primary);">Registre-se</a>
+    </div>
+</div>
+
+</body>
+</html>

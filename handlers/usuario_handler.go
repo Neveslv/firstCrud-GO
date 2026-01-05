@@ -3,9 +3,11 @@ package handlers
 import (
 	"CrudGO/database"
 	"CrudGO/model"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CriarUsuario(c *gin.Context) {
@@ -15,49 +17,43 @@ func CriarUsuario(c *gin.Context) {
 
 	if contentType == "application/json" {
 		if err := c.ShouldBindJSON(&usuario); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error":    "JSON inválido",
-				"detalhes": err.Error(),
-			})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
 			return
 		}
 	} else {
 		usuario.Nome = c.PostForm("nome")
 		usuario.Email = c.PostForm("email")
-	}
-	if usuario.Nome == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "O campo 'nome' é obrigatório",
-		})
-		return
+		senhaPura := c.PostForm("password")
+
+		if senhaPura == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "A senha é obrigatória"})
+			return
+		}
+
+		hash, err := bcrypt.GenerateFromPassword([]byte(senhaPura), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar senha"})
+			return
+		}
+		usuario.Password = string(hash)
 	}
 
-	if usuario.Email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "O campo 'email' é obrigatório",
-		})
+	if usuario.Nome == "" || usuario.Email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nome e Email são obrigatórios"})
 		return
 	}
 
 	var id int
-	query := "INSERT INTO usuario (nome, email) VALUES ($1, $2) RETURNING id"
-	err := database.DB.QueryRow(query, usuario.Nome, usuario.Email).Scan(&id)
+	query := "INSERT INTO usuario (nome, email, password) VALUES ($1, $2, $3) RETURNING id"
+	err := database.DB.QueryRow(query, usuario.Nome, usuario.Email, usuario.Password).Scan(&id)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":    "Erro ao criar usuário",
-			"detalhes": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar usuário. Email já existe?"})
 		return
 	}
 
 	if contentType == "application/json" {
-		c.JSON(http.StatusCreated, gin.H{
-			"mensagem": "Usuário criado com sucesso",
-			"id":       id,
-			"nome":     usuario.Nome,
-			"email":    usuario.Email,
-		})
+		c.JSON(http.StatusCreated, gin.H{"mensagem": "Usuário criado", "id": id})
 	} else {
 		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+criado+com+sucesso!&type=success")
 	}
@@ -66,51 +62,34 @@ func CriarUsuario(c *gin.Context) {
 func ListarUsuarios(c *gin.Context) {
 	rows, err := database.DB.Query("SELECT id, nome, email, created_at FROM usuario ORDER BY created_at DESC")
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":    "Erro ao buscar usuários",
-			"detalhes": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar usuários"})
 		return
 	}
 	defer rows.Close()
 
 	var usuarios []model.Usuario
-
 	for rows.Next() {
-		var usuario model.Usuario
-		err := rows.Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.CreatedAt)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error":    "Erro ao processar dados",
-				"detalhes": err.Error(),
-			})
-			return
-		}
-		usuarios = append(usuarios, usuario)
+		var u model.Usuario
+		rows.Scan(&u.ID, &u.Nome, &u.Email, &u.CreatedAt)
+		usuarios = append(usuarios, u)
 	}
-
 	if usuarios == nil {
 		usuarios = []model.Usuario{}
 	}
-
 	c.JSON(http.StatusOK, usuarios)
 }
 
 func BuscarUsuarioPorID(c *gin.Context) {
 	id := c.Param("id")
-	var usuario model.Usuario
-
+	var u model.Usuario
 	query := "SELECT id, nome, email, created_at FROM usuario WHERE id = $1"
-	err := database.DB.QueryRow(query, id).Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.CreatedAt)
+	err := database.DB.QueryRow(query, id).Scan(&u.ID, &u.Nome, &u.Email, &u.CreatedAt)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Usuário não encontrado",
-		})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
 		return
 	}
-
-	c.JSON(http.StatusOK, usuario)
+	c.JSON(http.StatusOK, u)
 }
 
 func AtualizarUsuario(c *gin.Context) {
@@ -118,116 +97,109 @@ func AtualizarUsuario(c *gin.Context) {
 	var usuario model.Usuario
 
 	contentType := c.GetHeader("Content-Type")
-
 	if contentType == "application/json" {
-		if err := c.ShouldBindJSON(&usuario); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error":    "JSON inválido",
-				"detalhes": err.Error(),
-			})
-			return
-		}
+		c.ShouldBindJSON(&usuario)
 	} else {
 		usuario.Nome = c.PostForm("nome")
 		usuario.Email = c.PostForm("email")
 	}
 
-	if usuario.Nome == "" || usuario.Email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Os campos 'nome' e 'email' são obrigatórios",
-		})
-		return
-	}
-
 	query := "UPDATE usuario SET nome = $1, email = $2 WHERE id = $3"
 	result, err := database.DB.Exec(query, usuario.Nome, usuario.Email, id)
-
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":    "Erro ao atualizar usuário",
-			"detalhes": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar"})
 		return
 	}
 
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Usuário não encontrado",
-		})
+	affected, _ := result.RowsAffected()
+	if affected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
 		return
 	}
 
 	if contentType == "application/json" {
-		c.JSON(http.StatusOK, gin.H{
-			"mensagem": "Usuário atualizado com sucesso",
-		})
+		c.JSON(http.StatusOK, gin.H{"mensagem": "Atualizado"})
 	} else {
 		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+atualizado!&type=success")
 	}
 }
 
 func DeletarUsuario(c *gin.Context) {
-	id := c.Param("id")
+	userIDToken, exists := c.Get("user_id")
+	idDaURL := c.Param("id")
 
-	result, err := database.DB.Exec("DELETE FROM usuario WHERE id = $1", id)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":    "Erro ao deletar usuário",
-			"detalhes": err.Error(),
-		})
+	if exists && fmt.Sprintf("%v", userIDToken) == idDaURL {
+		c.SetCookie("token", "", -1, "/", "", false, true)
+		c.Redirect(http.StatusFound, "/login?msg=Sua+conta+foi+encerrada.&type=info")
 		return
 	}
 
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Usuário não encontrado",
-		})
-		return
-	}
-
-	contentType := c.GetHeader("Content-Type")
-
-	if contentType == "application/json" {
-		c.JSON(http.StatusOK, gin.H{
-			"mensagem": "Usuário deletado com sucesso",
-		})
+	if c.GetHeader("Content-Type") == "application/json" {
+		c.JSON(http.StatusOK, gin.H{"mensagem": "Deletado"})
 	} else {
-		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+removido+com+sucesso!&type=success")
+		c.Redirect(http.StatusFound, "/usuarios?msg=Usuário+removido!&type=success")
 	}
 }
 
 func ListarUsuariosHTML(c *gin.Context) {
-	rows, err := database.DB.Query("SELECT id, nome, email, created_at FROM usuario ORDER BY created_at DESC ")
+	rows, err := database.DB.Query("SELECT id, nome, email, created_at FROM usuario ORDER BY created_at DESC")
 	if err != nil {
-		c.HTML(http.StatusOK, "usuario.html", gin.H{
-			"usuarios": []model.Usuario{},
-			"error":    "Erro ao buscar o usuario",
-		})
+		c.HTML(http.StatusOK, "usuarios.html", gin.H{"error": "Erro ao buscar"})
 		return
 	}
 	defer rows.Close()
 
 	var usuarios []model.Usuario
-
 	for rows.Next() {
-		var usuario model.Usuario
-		err := rows.Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.CreatedAt)
-		if err != nil {
-			c.HTML(http.StatusOK, "usuarios.html", gin.H{
-				"usuarios": []model.Usuario{},
-				"error":    "Erro ao processar dados",
-			})
-			return
-		}
+		var u model.Usuario
+		rows.Scan(&u.ID, &u.Nome, &u.Email, &u.CreatedAt)
+		usuarios = append(usuarios, u)
+	}
+	c.HTML(http.StatusOK, "usuarios.html", gin.H{"usuarios": usuarios})
+}
 
-		usuarios = append(usuarios, usuario)
-
+func ExibirTelaConfiguracoes(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.Redirect(http.StatusFound, "/login")
+		return
 	}
 
-	c.HTML(http.StatusOK, "usuarios.html", gin.H{
-		"usuarios": usuarios,
-	})
+	var usuario model.Usuario
+	id := int(userID.(float64))
+	querySegura := "SELECT id, nome, email, COALESCE(bio, ''), COALESCE(site, '') FROM usuario WHERE id = $1"
+
+	err := database.DB.QueryRow(querySegura, id).Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.Bio, &usuario.Site)
+
+	if err != nil {
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	c.HTML(http.StatusOK, "configuracoes.html", gin.H{"usuario": usuario})
+}
+
+func AtualizarConfiguracoes(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		fmt.Println("ERRO: Usuário não autenticado no contexto")
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	nome := c.PostForm("nome")
+	email := c.PostForm("email")
+	bio := c.PostForm("bio")
+	site := c.PostForm("site")
+
+	query := "UPDATE usuario SET nome=$1, email=$2, bio=$3, site=$4 WHERE id=$5"
+
+	_, err := database.DB.Exec(query, nome, email, bio, site, userID)
+
+	if err != nil {
+		fmt.Println("ERRO SQL:", err)
+		c.Redirect(http.StatusFound, "/configuracoes?msg=Erro+ao+salvar&type=error")
+		return
+	}
+	c.Redirect(http.StatusFound, "/configuracoes?msg=Perfil+atualizado!&type=success")
 }

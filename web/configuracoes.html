@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - GoMaster</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/main.js"></script>
+    <style>
+        /* Estilos específicos para esta página */
+        .config-grid {
+            display: grid;
+            gap: 24px;
+            max-width: 800px; /* Não deixa esticar demais em monitores gigantes */
+        }
+
+        .danger-zone {
+            border: 1px solid var(--danger);
+            background: rgba(255, 0, 0, 0.05); /* Leve tint vermelho */
+        }
+
+        .danger-zone h3 {
+            color: var(--danger);
+        }
+
+        .form-helper {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-main);
+            resize: vertical; /* Permite redimensionar só na altura */
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<aside class="app-sidebar">
+    <div class="brand"><span>GO</span>MASTER</div>
+    <ul class="nav-links">
+        <li class="nav-item"><a href="/"> Dashboard </a></li>
+        <li class="nav-item"><a href="/usuarios"> Usuários </a></li>
+        <li class="nav-item"><a href="/posts"> Posts </a></li>
+        <li class="nav-item"><a href="/configuracoes" class="active"> Configurações </a></li>
+    </ul>
+
+    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+        <a href="/logout" class="btn-back" style="display: block; text-align: center;">Sair do Sistema</a>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Configurações da Conta</h1>
+            <p>Gerencie seus dados públicos e preferências.</p>
+        </div>
+    </header>
+
+    <div class="config-grid">
+
+        <div class="post-card">
+            <h3>Perfil Público</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Essas informações serão visíveis para outros usuários.</p>
+
+            <form action="/configuracoes" method="POST">
+
+                <div class="form-group">
+                    <label for="nome">Nome de Exibição</label>
+                    <input type="text" id="nome" name="nome" value="{{.usuario.Nome}}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail (Login)</label>
+                    <input type="email" id="email" name="email" value="{{.usuario.Email}}" required>
+                    <span class="form-helper">Se mudar o e-mail, você precisará logar novamente.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Biografia</label>
+                    <textarea id="bio" name="bio" placeholder="Conte um pouco sobre você...">{{.usuario.Bio}}</textarea>
+                    <span class="form-helper">Breve descrição que aparece no seu perfil.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="site">Site / Portfolio</label>
+                    <input type="url" id="site" name="site" value="{{.usuario.Site}}" placeholder="https://seusite.com">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="post-card danger-zone">
+            <h3>Cuidado!!!</h3>
+            <p style="margin-bottom: 15px;">Ações irreversíveis. Tenha certeza do que está fazendo.</p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Excluir Conta</strong>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Isso apagará seus posts e comentários.</p>
+                </div>
+
+                <form action="/api/usuarios/{{.usuario.ID}}" method="POST" onsubmit="return confirm('Tem certeza absoluta? Essa ação NÃO pode ser desfeita e todos os seus dados serão perdidos.');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-danger">Excluir Conta</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>
