@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.usuario.Nome}} - Perfil</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* === ESTILOS DE PERFIL === */
+        body { background-color: var(--bg-app); display: block; overflow-y: auto; }
+
+        .public-nav {
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+
+        /* Cabeçalho do Perfil */
+        .profile-header {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar-large {
+            width: 120px; height: 120px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            color: var(--text-main);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; font-weight: 700;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 20px rgba(138, 28, 46, 0.2);
+        }
+
+        .profile-name { font-size: 2rem; margin-bottom: 10px; color: var(--text-main); }
+        .profile-bio {
+            color: var(--text-muted);
+            max-width: 500px; margin: 0 auto 20px;
+            font-size: 1.1rem; line-height: 1.6;
+        }
+
+        .profile-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--primary); text-decoration: none; font-weight: 600;
+            padding: 8px 16px; border: 1px solid rgba(138, 28, 46, 0.3);
+            border-radius: 20px; transition: all 0.2s;
+        }
+        .profile-link:hover { background: rgba(138, 28, 46, 0.1); }
+
+        /* Lista de Posts (Reaproveitando estilo do feed) */
+        .user-posts { margin-top: 40px; }
+        .section-title { margin-bottom: 30px; font-size: 1.5rem; color: var(--text-main); }
+
+        .mini-post-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .mini-post-card:hover { transform: translateX(5px); border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<nav class="public-nav">
+    <div class="container nav-content">
+        <a href="/" style="text-decoration: none;"><div class="brand" style="margin:0;"><span>GO</span>BLOGs</div></a>
+        <div class="nav-actions">
+            {{if .logado}}
+            <a href="/dashboard" class="btn btn-primary">Meu Painel</a>
+            {{else}}
+            <a href="/login" class="btn btn-back" style="border:none;">Entrar</a>
+            {{end}}
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <section class="profile-header">
+        <div class="avatar-large">
+            {{printf "%.1s" .usuario.Nome}}
+        </div>
+        <h1 class="profile-name">{{.usuario.Nome}}</h1>
+
+        {{if .usuario.Bio}}
+        <p class="profile-bio">{{.usuario.Bio}}</p>
+        {{else}}
+        <p class="profile-bio" style="font-style: italic; opacity: 0.6;">Este mago ainda não escreveu sua biografia.</p>
+        {{end}}
+
+        {{if .usuario.Site}}
+        <a href="{{.usuario.Site}}" target="_blank" class="profile-link">
+            🔗 Visitar Website
+        </a>
+        {{end}}
+
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
+            Membro desde {{.usuario.CreatedAt.Format "Jan 2006"}}
+        </p>
+    </section>
+
+    <section class="user-posts">
+        <h2 class="section-title">Publicações ({{len .posts}})</h2>
+
+        {{if .posts}}
+        {{range .posts}}
+        <div class="mini-post-card" onclick="window.location='/posts/{{.ID}}/detalhes'">
+            <h3 style="color: var(--text-main); margin-bottom: 8px;">{{.Titulo}}</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                {{.CreatedAt.Format "02 de Jan, 2006"}}
+            </p>
+        </div>
+        {{end}}
+        {{else}}
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>Nenhuma publicação encontrada.</p>
+        </div>
+        {{end}}
+    </section>
+</main>
+
+</body>
+</html>

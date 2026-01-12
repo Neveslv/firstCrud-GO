@@ -293,6 +293,9 @@ func ListarPostHTML(c *gin.Context) {
 func ExibirDetalhesPostHTML(c *gin.Context) {
 	id := c.Param("id")
 
+	tokenString, _ := c.Cookie("token")
+	usuarioLogado := tokenString != ""
+
 	var post model.Post
 	queryPost := `
 		SELECT p.id, p.user_id, p.titulo, p.content, p.created_at, u.nome, u.email 
@@ -321,7 +324,6 @@ func ExibirDetalhesPostHTML(c *gin.Context) {
 		defer rows.Close()
 		for rows.Next() {
 			var comentario model.Comentarios
-
 			err := rows.Scan(
 				&comentario.ID,
 				&comentario.UserID,
@@ -339,5 +341,6 @@ func ExibirDetalhesPostHTML(c *gin.Context) {
 	c.HTML(http.StatusOK, "post_detalhes.html", gin.H{
 		"post":        post,
 		"comentarios": comentarios,
+		"logado":      usuarioLogado,
 	})
 }

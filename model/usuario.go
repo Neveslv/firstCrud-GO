@@ -9,6 +9,7 @@ type Usuario struct {
 	Password  string    `json:"-"`
 	Bio       string    `json:"bio"`
 	Site      string    `json:"site"`
+	IsAdmin   bool      `json:"is_admin"`
 	CreatedAt time.Time `json:"created_at"`
 }
 type UsuarioInput struct {

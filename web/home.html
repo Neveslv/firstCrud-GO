@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoBlog - A Comunidade Go</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        /* === ESTILOS ESPECÍFICOS DA HOME (OVERRIDES) === */
+
+        /* Remove o layout flex padrão do body que acomodava a sidebar */
+        body.public-layout {
+            display: block; /* Remove o flex row */
+            background-color: var(--bg-app);
+            overflow-y: auto; /* Volta o scroll normal */
+        }
+
+        /* Navbar Pública */
+        .public-nav {
+            background-color: rgba(13, 17, 23, 0.95); /* Quase opaco */
+            backdrop-filter: blur(10px); /* Efeito vidro */
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: radial-gradient(circle at center, rgba(138, 28, 46, 0.15) 0%, transparent 70%);
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .hero-title span { color: var(--primary); }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        /* Feed de Posts */
+        .feed-container {
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        .post-card-public {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efeito de Hover "Chamativo mas Confortável" */
+        .post-card-public:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Pequeno detalhe estético na borda esquerda ao passar o mouse */
+        .post-card-public::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .post-card-public:hover::before { opacity: 1; }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .post-avatar {
+            width: 24px;
+            height: 24px;
+            background-color: var(--border);
+            color: var(--text-main);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .post-preview {
+            color: #a0aec0; /* Um cinza levemente mais claro que o muted */
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .read-more {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="public-layout">
+
+<nav class="public-nav">
+    <div class="container nav-content">
+        <div class="brand" style="margin: 0; padding: 0;"><span>GO</span>BLOGs</div>
+
+        <div class="nav-actions">
+            {{if .logado}}
+            <a href="/posts/novo" class="btn btn-success" style="margin-right: 10px;">✍ Novo Post</a>
+            <a href="/dashboard" class="btn btn-primary">Meu Painel</a>
+            {{else}}
+            <a href="/login" class="btn btn-back" style="border: none;">Entrar</a>
+            <a href="/registrar" class="btn btn-primary">Criar Conta</a>
+            {{end}}
+        </div>
+    </div>
+</nav>
+
+<header class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">Onde o código <span>ganha vida</span>.</h1>
+        <p class="hero-subtitle">
+            Artigos, discussões e tutoriais sobre o ecossistema Go.
+            Conecte-se, aprenda e compartilhe conhecimento com a comunidade.
+        </p>
+        {{if not .logado}}
+        <a href="/registrar" class="btn btn-primary" style="padding: 12px 24px; font-size: 1rem;">Começar a Escrever </a>
+        {{end}}
+    </div>
+</header>
+
+<main class="feed-container">
+    {{if .posts}}
+    {{range .posts}}
+    <article class="post-card-public" onclick="window.location='/posts/{{.ID}}/detalhes'" role="button" tabindex="0">                
+
+        <div class="post-meta">
+            <div class="post-avatar">{{printf "%.1s" .UserName}}</div>
+            <span>{{.UserName}}</span>
+            <span>•</span>
+            <time>{{.CreatedAt.Format "02 de Jan, 2006"}}</time>
+        </div>
+
+        <h2 class="post-title">{{.Titulo}}</h2>
+
+        <p class="post-preview">
+            {{if gt (len .Content) 220}}
+            {{slice .Content 0 220}}...
+            {{else}}
+            {{.Content}}
+            {{end}}
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+            <span class="read-more">Ler artigo completo →</span>
+        </div>
+
+    </article>
+    {{end}}
+    {{else}}
+    <div class="empty-state">
+        <h3>Ainda está tudo quieto por aqui... 3</h3>
+        <p>Seja o primeiro a compartilhar conhecimento!</p>
+        <br>
+        <a href="/posts/novo" class="btn btn-primary">Criar o Primeiro Post</a>
+    </div>
+    {{end}}
+</main>
+
+<script src="/static/main.js"></script>
+</body>
+</html>

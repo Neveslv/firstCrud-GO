@@ -3,50 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Post</title>
+    <title>Novo Post - GoBlog</title>
     <link rel="stylesheet" href="/static/style.css">
-    <script src="/static/main.js"></script>
+
+    <style>
+        /* === MODO DE ESCRITA (ZEN MODE) === */
+        body {
+            background-color: var(--bg-app);
+            display: block; /* Remove o layout flex da sidebar */
+            overflow-y: auto;
+        }
+
+        .public-nav {
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+
+        /* Área do Editor */
+        .editor-container {
+            max-width: 700px; /* Um pouco mais estreito para foco */
+            margin: 60px auto;
+        }
+
+        .page-title h1 { font-size: 2rem; margin-bottom: 10px; }
+        .page-title p { color: var(--text-muted); margin-bottom: 40px; }
+
+        /* Inputs Estilizados para parecerem título de artigo */
+        .input-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            border-radius: 0;
+        }
+        .input-title:focus {
+            box-shadow: none;
+            border-bottom-color: var(--primary);
+        }
+
+        .textarea-content {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            border: none;
+            background: transparent;
+            min-height: 400px;
+            padding: 0;
+            resize: none; /* JS poderia expandir auto, mas deixamos manual */
+        }
+        .textarea-content:focus { box-shadow: none; border: none; }
+
+        .actions {
+            display: flex; justify-content: flex-end; gap: 15px;
+            margin-top: 40px; border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-<aside class="app-sidebar">
-    <div class="brand"><span>GO</span>BLOGs</div>
-    <ul class="nav-links">
-        <li class="nav-item"><a href="/"> Dashboard </a></li>
-        <li class="nav-item"><a href="/usuarios"> Usuários </a></li>
-        <li class="nav-item"><a href="/posts" class="active"> Posts </a></li>
-        <li class="nav-item"><a href="/configuracoes" > Configurações </a></li>
-    </ul>
-</aside>
+<nav class="public-nav">
+    <div class="container nav-content">
+        <a href="/" style="text-decoration: none;">
+            <div class="brand" style="margin: 0;"><span>GO</span>BLOGs</div>
+        </a>
 
-<main class="main-content">
-    <header class="page-header">
-        <div class="page-title">
-            <h1>Criar Publicação</h1>
+        <div class="nav-actions">
+            <a href="/dashboard" class="btn btn-back" style="border:none;">Cancelar</a>
         </div>
-        <a href="/posts" class="btn btn-back">← Voltar</a>
-    </header>
+    </div>
+</nav>
 
-    <div class="form-container">
+<main class="container">
+    <div class="editor-container">
+        <div class="page-title">
+            <p>O que você vai ensinar hoje?</p>
+        </div>
+
         <form action="/api/posts" method="POST">
             <div class="form-group">
-                <label for="user_id">Autor (ID)</label>
-                <input type="number" id="user_id" name="user_id" placeholder="ID do usuário autor" required min="1">
+                <input type="text" id="titulo" name="titulo" class="input-title" placeholder="Título do seu artigo..." required maxlength="200" autocomplete="off">
             </div>
 
             <div class="form-group">
-                <label for="titulo">Título</label>
-                <input type="text" id="titulo" name="titulo" placeholder="Título chamativo" required maxlength="200">
+                <textarea id="content" name="content" class="textarea-content" placeholder="Comece a escrever sua história..." required></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="content">Conteúdo</label>
-                <textarea id="content" name="content" rows="8" placeholder="Escreva o conteúdo aqui..." required></textarea>
+            <div class="actions">
+                <a href="/dashboard" class="btn btn-back">Descartar</a>
+                <button type="submit" class="btn btn-success" style="padding: 10px 30px; font-size: 1rem;">Publicar Artigo </button>
             </div>
-
-            <button type="submit" class="btn btn-success">Publicar</button>
         </form>
     </div>
 </main>
+
 </body>
 </html>

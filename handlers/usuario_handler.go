@@ -203,3 +203,45 @@ func AtualizarConfiguracoes(c *gin.Context) {
 	}
 	c.Redirect(http.StatusFound, "/configuracoes?msg=Perfil+atualizado!&type=success")
 }
+
+func ExibirPerfilPublico(c *gin.Context) {
+	id := c.Param("id")
+
+	var usuario model.Usuario
+
+	query := "SELECT id, nome, email, COALESCE(bio, ''), COALESCE(site, ''), created_at FROM usuario WHERE id = $1"
+	err := database.DB.QueryRow(query, id).Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.Bio, &usuario.Site, &usuario.CreatedAt)
+
+	if err != nil {
+		c.HTML(http.StatusNotFound, "home.html", gin.H{
+			"error": "Usuário não encontrado",
+		})
+	}
+
+	queryPost := "SELECT id, titulo, content, created_at FROM posts WHERE user_id = $1 ORDER BY created_at DESC"
+	rows, err := database.DB.Query(queryPost, id)
+	if err != nil {
+		rows = nil
+	} else {
+		defer rows.Close()
+	}
+
+	var posts []model.Post
+	if rows != nil {
+		for rows.Next() {
+			var p model.Post
+			if err := rows.Scan(&p.ID, &p.Titulo, &p.Titulo, &p.Content, &p.CreatedAt); err == nil {
+				posts = append(posts, p)
+			}
+		}
+	}
+
+	tokenString, _ := c.Cookie("token")
+	logado := tokenString != ""
+
+	c.HTML(http.StatusOK, "perfil_publico.html", gin.H{
+		"usuario": usuario,
+		"posts":   posts,
+		"logado":  logado,
+	})
+}

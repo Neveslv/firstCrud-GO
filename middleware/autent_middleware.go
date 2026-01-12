@@ -33,8 +33,15 @@ func AutentMiddleware() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			
+			isAdmin, ok := claims["is_admin"].(bool)
+			if !ok || !isAdmin {
+				c.Redirect(http.StatusFound, "/?msg+Acesso+restrito+a+admin&type=error")
+				c.Abort()
+				return
+			}
+
 			c.Set("user_id", claims["sub"])
+			c.Set("is_admin", isAdmin)
 			c.Next()
 		} else {
 			c.Redirect(http.StatusFound, "/login?msg=Token+inválido")

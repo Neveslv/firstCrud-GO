@@ -8,7 +8,7 @@ import (
 )
 
 func SetupUsuarioRoutes(r *gin.Engine) {
-	usuarios := r.Group("/api")
+	usuarios := r.Group("/api/admin")
 	usuarios.Use(middleware.AutentMiddleware())
 	{
 		usuarios.POST("/usuarios", handlers.CriarUsuario)

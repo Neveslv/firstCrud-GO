@@ -17,8 +17,8 @@ func Login(c *gin.Context) {
 	password := c.PostForm("password")
 
 	var usuario model.Usuario
-	query := "SELECT id, nome, email, password FROM usuario WHERE email=$1"
-	err := database.DB.QueryRow(query, email).Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.Password)
+	query := "SELECT id, nome, email, password, is_admin FROM usuario WHERE email=$1"
+	err := database.DB.QueryRow(query, email).Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.Password, &usuario.IsAdmin)
 	if err != nil {
 		c.HTML(http.StatusUnauthorized, "login.html", gin.H{
 			"error": "Email ou senha inválidos",
@@ -35,8 +35,9 @@ func Login(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": usuario.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"sub":      usuario.ID,
+		"is_admin": usuario.IsAdmin,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
