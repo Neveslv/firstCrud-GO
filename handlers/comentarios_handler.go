@@ -14,6 +14,16 @@ func CriarComentario(c *gin.Context) {
 
 	var comentario model.Comentarios
 
+	userIDToken, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Usuário não autenticado",
+		})
+		return
+	}
+
+	comentario.UserID = int(userIDToken.(float64))
+
 	contentType := c.GetHeader("Content-Type")
 
 	if contentType == "application/json" {
@@ -21,9 +31,9 @@ func CriarComentario(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido", "detalhes": err.Error()})
 			return
 		}
+		comentario.UserID = int(userIDToken.(float64))
 	} else {
 		comentario.Content = c.PostForm("content")
-		comentario.UserID, _ = strconv.Atoi(c.PostForm("user_id"))
 	}
 
 	if comentario.Content == "" || comentario.UserID == 0 {

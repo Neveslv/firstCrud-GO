@@ -29,19 +29,27 @@
     </header>
 
     <div class="dashboard-grid">
-        <a href="/usuarios" class="stat-card">
-            <h3>Gerenciar Usuários</h3>
-            <p>Adicionar, listar e remover usuários da plataforma.</p>
+
+        {{if .is_admin}}
+        <a href="/usuarios" class="stat-card" style="border-color: var(--primary);">
+            <h3 style="color: var(--primary);">Gestão de Usuários</h3>
+            <p>Apenas o Mago Supremo vê isso.</p>
         </a>
+        {{end}}
 
         <a href="/posts" class="stat-card">
-            <h3>Gerenciar Posts</h3>
-            <p>Criar conteúdo, moderar discussões e comentários.</p>
+            <h3>Meus Posts</h3>
+            <p>Gerencie suas publicações.</p>
         </a>
 
-        <a href="/configuracoes" class="stat-card" style="text-decoration: none; color: inherit;">
-                <h3>Meu Perfil</h3>
-                <p>Edite sua Bio, Site e Dados Pessoais.</p>
+        <a href="/configuracoes" class="stat-card">
+            <h3>Configurações</h3>
+            <p>Dados da conta e senha.</p>
+        </a>
+
+        <a href="/perfil/{{.user_id}}" class="stat-card" style="opacity: 0.7;">
+            <h3>Ver Perfil Público</h3>
+            <p>Como os outros te veem.</p>
         </a>
     </div>
 </main>

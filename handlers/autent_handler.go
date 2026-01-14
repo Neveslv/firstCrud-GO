@@ -98,3 +98,28 @@ func RegistrarUsuario(c *gin.Context) {
 func ExibirTelaRegistro(c *gin.Context) {
 	c.HTML(http.StatusOK, "registrar.html", nil)
 }
+
+// Helper para extrair dados do token em qualquer lugar
+func GetDadosUsuario(c *gin.Context) (int, string, bool, bool) {
+	tokenString, err := c.Cookie("token")
+	if err != nil || tokenString == "" {
+		return 0, "", false, false // Não logado
+	}
+
+	token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		id := int(claims["sub"].(float64))
+		var nome string
+		var isAdmin bool
+
+		query := "SELECT nome, is_admin FROM usuario WHERE id = $1"
+		_ = database.DB.QueryRow(query, id).Scan(&nome, &isAdmin)
+
+		return id, nome, isAdmin, true
+	}
+
+	return 0, "", false, false
+}

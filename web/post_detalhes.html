@@ -151,8 +151,6 @@
 
         {{if .logado}}
         <form action="/api/posts/{{.post.ID}}/comentarios" method="POST" style="margin-bottom: 40px;">
-            <input type="hidden" name="user_id" value="{{.user_id}}">
-
             <div class="form-group">
                     <textarea name="content" rows="3" placeholder="O que você achou deste post?" required
                               style="background: var(--bg-app); border-color: var(--border);"></textarea>

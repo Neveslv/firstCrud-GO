@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoBlog - A Comunidade Go</title>
+    <title>GoBlog - Comunidade Developer</title>
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        /* === ESTILOS ESPECÍFICOS DA HOME (OVERRIDES) === */
+        /* === ESTILOS ESPECÍFICOS DA HOME (PREMIUM FEEL) === */
 
-        /* Remove o layout flex padrão do body que acomodava a sidebar */
-        body.public-layout {
-            display: block; /* Remove o flex row */
+        body {
             background-color: var(--bg-app);
-            overflow-y: auto; /* Volta o scroll normal */
+            display: block; /* Remove layout de admin */
+            overflow-y: auto;
         }
 
-        /* Navbar Pública */
+        /* 1. Navbar de Vidro */
         .public-nav {
-            background-color: rgba(13, 17, 23, 0.95); /* Quase opaco */
-            backdrop-filter: blur(10px); /* Efeito vidro */
-            border-bottom: 1px solid var(--border);
+            background-color: rgba(13, 17, 23, 0.85); /* Mais translucido */
+            backdrop-filter: blur(12px); /* Desfoque mais forte */
+            border-bottom: 1px solid rgba(48, 54, 61, 0.5);
             padding: 15px 0;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .container {
@@ -39,136 +38,181 @@
             align-items: center;
         }
 
-        /* Hero Section */
+        /* 2. Hero Section (Topo com Brilho) */
         .hero-section {
             text-align: center;
-            padding: 80px 20px 60px;
-            background: radial-gradient(circle at center, rgba(138, 28, 46, 0.15) 0%, transparent 70%);
+            padding: 100px 20px 80px;
+            /* Um gradiente sutil que "acende" o fundo com a cor primária */
+            background: radial-gradient(circle at center top, rgba(138, 28, 46, 0.12) 0%, transparent 60%);
+            margin-bottom: 40px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(138, 28, 46, 0.15);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(138, 28, 46, 0.2);
         }
 
         .hero-title {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
+            color: var(--text-main);
             margin-bottom: 15px;
             letter-spacing: -1px;
             line-height: 1.1;
         }
 
-        .hero-title span { color: var(--primary); }
+        .hero-title span {
+            background: linear-gradient(120deg, var(--primary), #d9455f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
         .hero-subtitle {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--text-muted);
             max-width: 600px;
-            margin: 0 auto 30px;
+            margin: 0 auto 35px;
             line-height: 1.6;
         }
 
-        /* Feed de Posts */
+        /* 3. Cards de Post (Modernizados) */
         .feed-container {
             max-width: 800px;
-            margin: 0 auto 60px;
+            margin: 0 auto 100px;
         }
 
         .post-card-public {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 24px;
-            transition: all 0.2s ease;
-            cursor: pointer;
+            border-radius: 16px; /* Mais arredondado */
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
+            cursor: pointer;
             overflow: hidden;
         }
 
-        /* Efeito de Hover "Chamativo mas Confortável" */
+        /* Efeito de elevação suave */
         .post-card-public:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
+            border-color: rgba(138, 28, 46, 0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
 
-        /* Pequeno detalhe estético na borda esquerda ao passar o mouse */
-        .post-card-public::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; bottom: 0;
-            width: 4px;
-            background: var(--primary);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .post-card-public:hover::before { opacity: 1; }
-
-        .post-meta {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
+        .post-header-meta {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
-        .post-avatar {
-            width: 24px;
-            height: 24px;
-            background-color: var(--border);
-            color: var(--text-main);
+        .author-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: #21262d;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
             font-weight: bold;
-        }
-
-        .post-title {
-            font-size: 1.5rem;
+            font-size: 0.8rem;
             color: var(--text-main);
-            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .author-name {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .author-name:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .post-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .post-title-card {
+            font-size: 1.8rem;
             font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+            transition: color 0.2s;
         }
 
-        .post-preview {
-            color: #a0aec0; /* Um cinza levemente mais claro que o muted */
+        .post-excerpt {
+            color: #8b949e;
             line-height: 1.6;
+            font-size: 1.05rem;
             margin-bottom: 20px;
-            font-size: 1rem;
         }
 
-        .read-more {
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(48, 54, 61, 0.4);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .read-more-btn {
             color: var(--primary);
             font-weight: 600;
             font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 5px;
         }
 
+        /* Empty State Bonito */
         .empty-state {
             text-align: center;
-            padding: 60px;
-            color: var(--text-muted);
-            border: 1px dashed var(--border);
-            border-radius: 12px;
+            padding: 80px 20px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            background: rgba(22, 27, 34, 0.5);
         }
+
     </style>
 </head>
-<body class="public-layout">
+<body>
 
 <nav class="public-nav">
     <div class="container nav-content">
-        <div class="brand" style="margin: 0; padding: 0;"><span>GO</span>BLOGs</div>
+        <a href="/" style="text-decoration: none;">
+            <div class="brand" style="margin: 0; font-size: 1.4rem;"><span>GO</span>BLOGs</div>
+        </a>
 
-        <div class="nav-actions">
+        <div class="nav-actions" style="display: flex; align-items: center; gap: 15px;">
             {{if .logado}}
-            <a href="/posts/novo" class="btn btn-success" style="margin-right: 10px;">✍ Novo Post</a>
-            <a href="/dashboard" class="btn btn-primary">Meu Painel</a>
+            <div style="text-align: right; margin-right: 10px; display: none; @media (min-width: 768px) { display: block; }">
+                <span style="display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Olá</span>
+                <strong style="color: var(--text-main);">{{.user_nome}}</strong>
+            </div>
+
+            <a href="/posts/novo" class="btn btn-success" title="Escrever novo artigo">✍️ Escrever</a>
+
+            <a href="/dashboard" class="btn btn-back" title="Ir para o Painel">Painel</a>
+
+            <a href="/logout" class="btn btn-danger" style="padding: 8px 12px; background: transparent; border: 1px solid var(--border);" title="Sair">
+                ✕
+            </a>
             {{else}}
             <a href="/login" class="btn btn-back" style="border: none;">Entrar</a>
-            <a href="/registrar" class="btn btn-primary">Criar Conta</a>
+            <a href="/registrar" class="btn btn-primary">Começar Agora</a>
             {{end}}
         </div>
     </div>
@@ -176,13 +220,22 @@
 
 <header class="hero-section">
     <div class="container">
-        <h1 class="hero-title">Onde o código <span>ganha vida</span>.</h1>
+        <span class="hero-badge">Comunidade v1.0</span>
+        <h1 class="hero-title">Onde o código <span>ganha voz</span>.</h1>
         <p class="hero-subtitle">
-            Artigos, discussões e tutoriais sobre o ecossistema Go.
-            Conecte-se, aprenda e compartilhe conhecimento com a comunidade.
+            Explore artigos, tutoriais e discussões sobre o ecossistema Go.
+            Compartilhe seu conhecimento e conecte-se com outros desenvolvedores.
         </p>
+
         {{if not .logado}}
-        <a href="/registrar" class="btn btn-primary" style="padding: 12px 24px; font-size: 1rem;">Começar a Escrever </a>
+        <div style="margin-top: 30px;">
+            <a href="/registrar" class="btn btn-primary" style="padding: 14px 30px; font-size: 1.1rem; border-radius: 8px;">
+                Criar minha conta 🚀
+            </a>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
+                É grátis e open-source.
+            </p>
+        </div>
         {{end}}
     </div>
 </header>
@@ -190,37 +243,41 @@
 <main class="feed-container">
     {{if .posts}}
     {{range .posts}}
-    <article class="post-card-public" onclick="window.location='/posts/{{.ID}}/detalhes'" role="button" tabindex="0">                
+    <article class="post-card-public" onclick="window.location='/posts/{{.ID}}/detalhes'" role="button" tabindex="0">
 
-        <div class="post-meta">
-            <div class="post-avatar">{{printf "%.1s" .UserName}}</div>
-            <span>{{.UserName}}</span>
-            <span>•</span>
-            <time>{{.CreatedAt.Format "02 de Jan, 2006"}}</time>
+        <div class="post-header-meta">
+            <a href="/perfil/{{.UserID}}" style="text-decoration: none;" onclick="event.stopPropagation()">
+                <div class="author-avatar-small">
+                    {{printf "%.1s" .UserName}}
+                </div>
+            </a>
+            <div style="display: flex; flex-direction: column;">
+                <a href="/perfil/{{.UserID}}" class="author-name" onclick="event.stopPropagation()">{{.UserName}}</a>
+                <span class="post-date">{{.CreatedAt.Format "02 de Jan, 2006"}}</span>
+            </div>
         </div>
 
-        <h2 class="post-title">{{.Titulo}}</h2>
+        <h2 class="post-title-card">{{.Titulo}}</h2>
 
-        <p class="post-preview">
-            {{if gt (len .Content) 220}}
-            {{slice .Content 0 220}}...
-            {{else}}
+        <p class="post-excerpt" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
             {{.Content}}
-            {{end}}
         </p>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-            <span class="read-more">Ler artigo completo →</span>
+        <div class="card-footer">
+            <span class="read-more-btn">Ler artigo completo →</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Tempo de leitura: ~2 min</span>
         </div>
 
     </article>
     {{end}}
     {{else}}
     <div class="empty-state">
-        <h3>Ainda está tudo quieto por aqui... 3</h3>
-        <p>Seja o primeiro a compartilhar conhecimento!</p>
-        <br>
-        <a href="/posts/novo" class="btn btn-primary">Criar o Primeiro Post</a>
+        <div style="font-size: 3rem; margin-bottom: 20px;">🦗</div>
+        <h3 style="color: var(--text-main); margin-bottom: 10px;">Nada por aqui... ainda!</h3>
+        <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 30px;">
+            Nossa comunidade está apenas começando. Que tal ser o pioneiro e publicar o primeiro artigo?
+        </p>
+        <a href="/posts/novo" class="btn btn-primary">Escrever Primeiro Post</a>
     </div>
     {{end}}
 </main>

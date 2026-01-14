@@ -344,3 +344,49 @@ func ExibirDetalhesPostHTML(c *gin.Context) {
 		"logado":      usuarioLogado,
 	})
 }
+
+func ExibirHomeBlog(c *gin.Context) {
+	query := `
+		SELECT p.id, p.user_id, p.titulo, p.content, p.created_at, u.nome, u.email 
+		FROM posts p 
+		LEFT JOIN usuario u ON p.user_id = u.id 
+		ORDER BY p.created_at DESC
+	`
+
+	rows, err := database.DB.Query(query)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "home.html", gin.H{
+			"erro": "Erro ao carregar o post",
+		})
+	}
+	defer rows.Close()
+
+	var posts []model.Post
+
+	for rows.Next() {
+		var post model.Post
+		var nomeTemp sql.NullString
+		var emailTemp sql.NullString
+
+		err := rows.Scan(&post.ID, &post.UserID, &post.Titulo, &post.Content, &post.CreatedAt, &nomeTemp, &emailTemp)
+
+		if err == nil {
+			if nomeTemp.Valid {
+				post.UserName = nomeTemp.String
+			} else {
+				post.UserName = "User desconhecido"
+			}
+			posts = append(posts, post)
+		}
+
+		userID, userNome, isAdmin, logado := GetDadosUsuario(c)
+
+		c.HTML(http.StatusOK, "home.html", gin.H{
+			"posts":     posts,
+			"logado":    logado,
+			"user_id":   userID,
+			"user_nome": userNome,
+			"is_admin":  isAdmin,
+		})
+	}
+}
